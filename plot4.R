@@ -18,13 +18,19 @@ plot4 <- function() {
   
   # read file and get value
   library(readr)
-  data <- read_delim("data/household_power_consumption.txt", ";", na = c("?"))
+  data <- read_delim(
+    "data/household_power_consumption.txt", 
+    ";", 
+    col_names = TRUE,
+    col_types = cols("c", "c", "d", "d", "d", "d", "d", "d", "d"),
+    na = c("?")
+  )
   
   # preprocess data
   library(dplyr)
   filtered_data <- data %>%
-    mutate(date_and_time = as.POSIXct(strptime(paste(Date, as.character(Time)), format = "%d/%m/%Y %H:%M:%S"))) %>%
-    filter(date_and_time >= as.POSIXct("2007-02-01 00:00:00") & date_and_time <= as.POSIXct("2007-02-02 23:59:59"))
+    filter(Date %in% c("1/2/2007", "2/2/2007")) %>%
+    mutate(date_and_time = as.POSIXct(strptime(paste(Date, Time), format = "%d/%m/%Y %H:%M:%S")))
   
   # prepare graphics
   par(mfrow = c(2, 2))
@@ -34,24 +40,23 @@ plot4 <- function() {
     filtered_data$Global_active_power ~ filtered_data$date_and_time, 
     xlab = "", 
     ylab = "Global Active Power (kilowatts)", 
-    type = "n"
+    type = "l"
   )
-  lines(filtered_data$Global_active_power ~ filtered_data$date_and_time)
   
   # make plot 2
   plot(
     filtered_data$Voltage ~ filtered_data$date_and_time, 
     xlab = "datetime", 
     ylab = "Voltage", 
-    type = "n"
+    type = "l"
   )
-  lines(filtered_data$Voltage ~ filtered_data$date_and_time)
   
   # make plot 3
   plot(
     filtered_data$Sub_metering_1 ~ filtered_data$date_and_time, 
     xlab = "", 
-    ylab = "Energy sub metering"
+    ylab = "Energy sub metering",
+    type = "l"
   )
   lines(filtered_data$Sub_metering_2 ~ filtered_data$date_and_time, col = "red")
   lines(filtered_data$Sub_metering_3 ~ filtered_data$date_and_time, col = "blue")
@@ -59,7 +64,8 @@ plot4 <- function() {
     "topright", 
     legend = c("Sub_metering_1", "Sub_metering_2", "Sub_metering_3"), 
     col = c("black", "red", "blue"),
-    lty = 1
+    lty = 1,
+    cex = 0.75
   )
   
   # make plot 4
@@ -72,7 +78,7 @@ plot4 <- function() {
   lines(filtered_data$Global_reactive_power ~ filtered_data$date_and_time)
   
   # copy plot to file
-  dev.copy(png, "plot4.png")
+  dev.copy(png, width = 480, height = 480, "plot4.png")
   dev.off()
   
   # return data for tests
