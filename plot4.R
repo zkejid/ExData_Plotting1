@@ -51,16 +51,15 @@ plot4 <- function() {
   plot(
     filtered_data$Sub_metering_1 ~ filtered_data$date_and_time, 
     xlab = "", 
-    ylab = "Energy sub metering", 
-    type = "n"
+    ylab = "Energy sub metering"
   )
-  lines(filtered_data$Sub_metering_1 ~ filtered_data$date_and_time)
   lines(filtered_data$Sub_metering_2 ~ filtered_data$date_and_time, col = "red")
   lines(filtered_data$Sub_metering_3 ~ filtered_data$date_and_time, col = "blue")
   legend(
     "topright", 
     legend = c("Sub_metering_1", "Sub_metering_2", "Sub_metering_3"), 
-    col = c("black", "red", "blue")
+    col = c("black", "red", "blue"),
+    lty = 1
   )
   
   # make plot 4
